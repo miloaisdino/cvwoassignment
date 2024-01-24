@@ -2,15 +2,15 @@ package models
 
 type Post struct {
 	ID      uint   `json:"id" gorm:"primary_key"`
-	Author  uint   `json:"author"`
+	Author  string `json:"author"`
 	Thread  uint   `json:"thread"`
 	Content string `json:"content"`
 }
 
 type CreatePostInput struct {
-	Author  uint   `json:"author" binding:"required"`
-	Thread  uint   `json:"thread"`
+	Author  string `json:"author" binding:"required"`
 	Content string `json:"content" binding:"required"`
+	Thread  uint   `json:"thread"`
 }
 
 type UpdatePostInput struct {

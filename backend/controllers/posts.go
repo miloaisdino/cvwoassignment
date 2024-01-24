@@ -27,7 +27,7 @@ func CreatePost(c *gin.Context) {
 	}
 
 	// Create post
-	post := models.Post{Author: input.Author, Content: input.Content}
+	post := models.Post{Author: input.Author, Content: input.Content, Thread: input.Thread}
 	models.DB.Create(&post)
 
 	c.JSON(http.StatusOK, gin.H{"data": post})
