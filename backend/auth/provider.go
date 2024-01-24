@@ -138,7 +138,7 @@ func Provider(r *gin.Engine) {
 		SendCookie:     true,
 		SecureCookie:   false, //non HTTPS dev environments
 		CookieHTTPOnly: false,
-		CookieDomain:   "localhost:8080",
+		CookieDomain:   os.Getenv("COOKIE_DOMAIN"),
 		CookieName:     "jwt",
 		CookieSameSite: http.SameSiteDefaultMode, //SameSiteDefaultMode, SameSiteLaxMode, SameSiteStrictMode, SameSiteNoneMode
 	})
@@ -162,10 +162,10 @@ func Provider(r *gin.Engine) {
 	})
 
 	//does the redirect
-	googleProvider := google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_CLIENT_SECRET"), "http://localhost:8080/callback")
+	googleProvider := google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_CLIENT_SECRET"), os.Getenv("GOOGLE_CALLBACK"))
 	goth.UseProviders(googleProvider)
 
-	r.GET("/login", func(c *gin.Context) { //TODO: to make callback url dynamic
+	r.GET("/login", func(c *gin.Context) {
 		q := c.Request.URL.Query()
 		q.Add("provider", "google")
 		c.Request.URL.RawQuery = q.Encode()
