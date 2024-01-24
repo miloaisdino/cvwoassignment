@@ -1,7 +1,7 @@
 // src/components/PostDetails.tsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
+import { apiInstance, ApiErrorAlert } from '../utils/api';
 import { Typography, Button, TextField } from '@mui/material';
 
 interface Post {
@@ -19,7 +19,7 @@ const PostDetails: React.FC = () => {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/posts/${id}`);
+                const response = await apiInstance.get(`http://localtest.me:8080/posts/${id}`);
                 setPost(response.data.data);
                 setEditedContent(response.data.data.content);
             } catch (error) {
@@ -39,9 +39,19 @@ const PostDetails: React.FC = () => {
         setEditedContent(post?.content || '');
     };
 
+    const handleDelete = async () => {
+        try {
+            await apiInstance.delete(`http://localtest.me:8080/posts/${id}`);
+            // Redirect to the post list after deleting the post
+            window.location.replace('/posts')
+        } catch (error) {
+            console.error('Error deleting post:', error);
+        }
+    };
+
     const handleSaveClick = async () => {
         try {
-            const response = await axios.patch(`http://localhost:8080/posts/${id}`, {
+            const response = await apiInstance.patch(`http://localtest.me:8080/posts/${id}`, {
                 content: editedContent,
             });
 
@@ -54,6 +64,7 @@ const PostDetails: React.FC = () => {
 
     return (
         <div>
+            <ApiErrorAlert />
             <Typography variant="h4">Post Details</Typography>
             {post ? (
                 <div>
@@ -87,6 +98,9 @@ const PostDetails: React.FC = () => {
             ) : (
                 <Typography variant="body1">Loading...</Typography>
             )}
+            <Button variant="contained" color="secondary" onClick={handleDelete}>
+                Delete
+            </Button>
             <Button component={Link} to="/posts" variant="contained" color="primary">
                 Back to List
             </Button>

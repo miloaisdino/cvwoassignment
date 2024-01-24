@@ -1,6 +1,6 @@
 // src/components/NewPost.tsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import { apiInstance, ApiErrorAlert } from '../utils/api';
 import { TextField, Button, Typography } from '@mui/material';
 
 const NewPost: React.FC = () => {
@@ -9,7 +9,7 @@ const NewPost: React.FC = () => {
 
     const handleCreatePost = async () => {
         try {
-            await axios.post('http://localhost:8080/posts', {
+            await apiInstance.post('http://localtest.me:8080/posts', {
                 author,
                 content,
             });
@@ -23,6 +23,7 @@ const NewPost: React.FC = () => {
 
     return (
         <div>
+            <ApiErrorAlert />
             <Typography variant="h4">New Post</Typography>
             <TextField
                 label="Author"

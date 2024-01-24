@@ -49,7 +49,7 @@ type User struct {
 
 var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 
-func Provider(r *gin.Engine) {
+func Provider(r *gin.Engine) gin.HandlerFunc {
 	isProd := false // Set to true when serving over https
 
 	store.MaxAge(60 * 5) //give 5 mins to complete sso
@@ -129,6 +129,21 @@ func Provider(r *gin.Engine) {
 				"code":    code,
 				"message": message,
 			})
+			c.Abort()
+		},
+		LoginResponse: func(c *gin.Context, code int, token string, t time.Time) {
+			_, err := c.Cookie("jwt")
+			if err != nil {
+				log.Println(err)
+			}
+			c.Redirect(http.StatusFound, "http://localtest.me:3000/posts")
+			/*c.JSON(http.StatusOK, gin.H{
+				"code":    http.StatusOK,
+				"token":   token,
+				"expire":  t.Format(time.RFC3339),
+				"message": "login successfully",
+				"cookie":  cookie,
+			})*/
 		},
 
 		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
@@ -140,7 +155,7 @@ func Provider(r *gin.Engine) {
 		CookieHTTPOnly: false,
 		CookieDomain:   os.Getenv("COOKIE_DOMAIN"),
 		CookieName:     "jwt",
-		CookieSameSite: http.SameSiteDefaultMode, //SameSiteDefaultMode, SameSiteLaxMode, SameSiteStrictMode, SameSiteNoneMode
+		CookieSameSite: http.SameSiteLaxMode, //SameSiteDefaultMode, SameSiteLaxMode, SameSiteStrictMode, SameSiteNoneMode
 	})
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
@@ -215,4 +230,6 @@ func Provider(r *gin.Engine) {
 		auth.GET("/hello", helloHandler)
 		auth.GET("/me", meHandler)
 	}
+
+	return authMiddleware.MiddlewareFunc()
 }

@@ -83,19 +83,9 @@ const App: React.FC = () => {
 };
 
 const LoginPage: React.FC<{ setAuth: React.Dispatch<React.SetStateAction<boolean>> }> = ({ setAuth }) => {
-    const handleLogin = () => {
-        // Perform login logic here
-        setAuth(true);
-    };
-
-    return (
-        <div>
-            <Typography variant="h4">Login</Typography>
-            <Button variant="contained" color="primary" onClick={handleLogin}>
-                Login
-            </Button>
-        </div>
-    );
+    setAuth(true);
+    window.location.replace('http://localtest.me:8080/login')
+    return <div />;
 };
 
 export default App;

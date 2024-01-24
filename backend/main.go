@@ -16,17 +16,18 @@ func main() {
 
 	// Enable CORS middleware
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"*"} // You can replace "*" with specific origins
+	config.AllowOrigins = []string{"http://localtest.me:3000"} // You can replace "*" with specific origins
+	config.AllowCredentials = true
 	r.Use(cors.New(config))
 
 	models.ConnectDatabase() // new
-	auth.Provider(r)
+	authy := auth.Provider(r)
 
 	r.GET("/posts", controllers.GetPosts)
 	r.GET("/posts/:id", controllers.FindPost)
-	r.POST("/posts", controllers.CreatePost)
-	r.PATCH("/posts/:id", controllers.UpdatePost)
-	r.DELETE("/posts/:id", controllers.DeletePost)
+	r.POST("/posts", authy, controllers.CreatePost)
+	r.PATCH("/posts/:id", authy, controllers.UpdatePost)
+	r.DELETE("/posts/:id", authy, controllers.DeletePost)
 
 	err := r.Run()
 	if err != nil {

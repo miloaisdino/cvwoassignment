@@ -10,7 +10,7 @@ const PostList: React.FC = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/posts');
+                const response = await axios.get('http://localtest.me:8080/posts');
                 setPosts(response.data.data);
             } catch (error) {
                 console.error('Error fetching posts:', error);
