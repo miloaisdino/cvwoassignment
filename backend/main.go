@@ -7,11 +7,17 @@ import (
 	"backend/auth"
 	"backend/models"
 
+	"github.com/gin-contrib/cors"
 	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
 	r := gin.Default()
+
+	// Enable CORS middleware
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"} // You can replace "*" with specific origins
+	r.Use(cors.New(config))
 
 	models.ConnectDatabase() // new
 	auth.Provider(r)
