@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, Button, Typography, Grid } from '@mui/material';
 
-const PostList: React.FC = () => {
+const PostList = ({isLogged}: {isLogged: boolean}) => {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
@@ -22,9 +22,9 @@ const PostList: React.FC = () => {
 
     return (
         <Grid container spacing={2}>
-            <Button component={Link} to="/new-post" variant="contained" color="primary"
+            <Button disabled={!isLogged} component={Link} to="/new-post" variant="contained" color="primary"
                     sx={{ml: 2, mb: 1, mt: 1}}>
-                New Post
+                {isLogged ? "New Post" : "Login to Post"}
             </Button>
             {posts.map((post: any) => (
                 <Grid item key={post.id} xs={12}>

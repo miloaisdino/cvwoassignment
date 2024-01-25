@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import PostList from './components/PostList';
@@ -7,9 +7,18 @@ import PostDetails from './components/PostDetails';
 import NewPost from './components/NewPost';
 import {AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Typography, Container, Box} from '@mui/material';
 
+interface UserData {
+    dp: string;
+    name: string;
+    email: string;
+}
+
+axios.defaults.withCredentials = true;
+
 const App: React.FC = () => {
+    const [userData, setUserData] = useState<UserData | null>(null);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const auth = document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/);
+    //const auth = document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -19,6 +28,20 @@ const App: React.FC = () => {
         setAnchorEl(null);
     };
 
+    useEffect(() => {
+        // Fetch user data from /auth/me endpoint
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get('http://localtest.me:8080/auth/me');
+                setUserData(response.data.data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
     return (
         <Router>
             <AppBar position="static">
@@ -26,14 +49,11 @@ const App: React.FC = () => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         Forum App
                     </Typography>
-                    {auth ? (
+                    {userData ? (
                         <div>
-                            <Button color="inherit" component={Link} to="/posts">
-                                Posts
-                            </Button>
-                            <Button color="inherit" onClick={handleMenuOpen}>
-                                <Avatar alt="User" src="/path-to-profile-pic.jpg" sx={{ width: 32, height: 32, marginRight: 1 }} />
-                                User
+                            <Button color="inherit" style={{textTransform: 'none'}} onClick={handleMenuOpen}>
+                                <Avatar alt="User" src={userData.dp} sx={{ width: 32, height: 32, marginRight: 1 }} />
+                                {/*userData.name*/}
                             </Button>
                             <Menu
                                 id="profile-menu"
@@ -65,7 +85,7 @@ const App: React.FC = () => {
                     }}
                 >
                 <Routes>
-                    <Route path="/posts" element={<PostList />} />
+                    <Route path="/posts" element={<PostList isLogged={userData !== null} />} />
                     <Route path="/posts/:id" element={<PostDetails />} />
                     <Route path="/new-post" element={<NewPost />} />
                     <Route path="/login" element={<LoginPage logout={false} />} />
