@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"backend/auth"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"math/rand"
 	"net/http"
@@ -19,10 +20,11 @@ func GetPosts(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
+	isAdmin := auth.AdminCheck(c)
 	for k, post := range posts {
-		if claims["email"] == nil || post.Email != claims["email"].(string) {
+		if isAdmin == false && (claims["email"] == nil || post.Email != claims["email"].(string)) {
 			post.Email = ""
-		} //redact non-self emails
+		}
 		posts[k] = post
 	}
 	c.JSON(http.StatusOK, gin.H{"data": posts})

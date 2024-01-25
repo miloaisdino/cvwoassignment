@@ -20,6 +20,7 @@ axios.defaults.withCredentials = true;
 
 const App: React.FC = () => {
     const [userData, setUserData] = useState<UserData | null>(null);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     //const auth = document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/);
 
@@ -38,6 +39,7 @@ const App: React.FC = () => {
                 if(document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/)) {
                     const response = await axios.get('http://localtest.me:8080/auth/me');
                     setUserData(response.data.data);
+                    setIsAdmin(response.data.isAdmin);
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -72,6 +74,7 @@ const App: React.FC = () => {
                                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                             >
+                                {isAdmin && <MenuItem component={Link} to="/admin">Admin</MenuItem>}
                                 <MenuItem component={Link} to="/logout">Logout</MenuItem>
                             </Menu>
                         </div>

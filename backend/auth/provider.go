@@ -41,7 +41,8 @@ func helloHandler(c *gin.Context) {
 func meHandler(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 	c.JSON(200, gin.H{
-		"data": claims,
+		"data":    claims,
+		"isAdmin": AdminCheck(c),
 	})
 }
 

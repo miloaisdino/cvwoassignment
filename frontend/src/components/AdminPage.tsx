@@ -56,7 +56,7 @@ const AdminPage: React.FC = () => {
 
     return (
         <div>
-            <h2>Admin Page</h2>
+            <h2>User Management</h2>
             <div style={{ height: '100%', width: '80vw' }}>
                 <DataGrid
                     rows={adminData}
