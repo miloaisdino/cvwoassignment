@@ -3,13 +3,14 @@ package models
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"os"
 )
 
 var DB *gorm.DB
 
 func ConnectDatabase() {
 
-	dsn := "cvwo:@tcp(localhost:3306)/cvwo?charset=utf8&parseTime=True&loc=Local"
+	dsn := os.Getenv("DB_URI")
 	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {

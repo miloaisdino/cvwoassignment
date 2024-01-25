@@ -27,7 +27,7 @@ const NewPost: React.FC = () => {
 
     const handleCreatePost = async () => {
         try {
-            await apiInstance.post('http://localtest.me:8080/posts', {
+            await apiInstance.post(process.env.REACT_APP_BACKEND_URI + '/posts', {
                 content,
                 tags: tagList,
             });

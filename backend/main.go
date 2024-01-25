@@ -3,6 +3,7 @@ package main
 import (
 	"backend/controllers"
 	"github.com/gin-gonic/gin"
+	"os"
 
 	"backend/auth"
 	"backend/models"
@@ -16,7 +17,7 @@ func main() {
 
 	// Enable CORS middleware
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localtest.me:3000"} // You can replace "*" with specific origins
+	config.AllowOrigins = []string{os.Getenv("FRONTEND_URI")} // You can replace "*" with specific origins
 	config.AllowCredentials = true
 	r.Use(cors.New(config))
 

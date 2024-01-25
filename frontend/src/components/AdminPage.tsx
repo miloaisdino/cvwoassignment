@@ -21,7 +21,7 @@ const AdminPage: React.FC = () => {
         // Fetch admin data
         const fetchData = async () => {
             try {
-                const response = await axios.get<{ data: AdminData[] }>('http://localtest.me:8080/admin/data');
+                const response = await axios.get<{ data: AdminData[] }>(process.env.REACT_APP_BACKEND_URI + '/admin/data');
                 setAdminData(response.data.data);
             } catch (error) {
                 console.error('Error fetching admin data:', error);
@@ -33,7 +33,7 @@ const AdminPage: React.FC = () => {
 
     const handleUpdateAdminData = async () => {
         try {
-            await axios.patch('http://localtest.me:8080/admin/data', adminData);
+            await axios.patch(process.env.REACT_APP_BACKEND_URI + '/admin/data', adminData);
             console.log('Admin data updated successfully');
         } catch (error) {
             console.error('Error updating admin data:', error);

@@ -14,9 +14,9 @@ const PostList = ({isLogged}: { isLogged: boolean }) => {
             try {
                 let response: AxiosResponse<any, any>;
                 if(document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/)) {
-                    response = await apiInstance.get('http://localtest.me:8080/posts');
+                    response = await apiInstance.get(process.env.REACT_APP_BACKEND_URI + '/posts');
                 } else {
-                    response = await apiInstance.get('http://localtest.me:8080/posts-read');
+                    response = await apiInstance.get(process.env.REACT_APP_BACKEND_URI + '/posts-read');
                 }
                 setPosts(response.data.data);
             } catch (error) {

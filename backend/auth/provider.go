@@ -26,6 +26,8 @@ type login struct {
 	Password string `form:"password" json:"password" binding:"required"`
 }
 
+var frontendURI = os.Getenv("FRONTEND_URI")
+
 var identityKey = "email"
 
 func helloHandler(c *gin.Context) {
@@ -188,7 +190,7 @@ func Provider(r *gin.Engine) gin.HandlerFunc {
 			if err != nil {
 				log.Println(err)
 			}
-			c.Redirect(http.StatusFound, "http://localtest.me:3000/posts")
+			c.Redirect(http.StatusFound, frontendURI+"/posts")
 			/*c.JSON(http.StatusOK, gin.H{
 				"code":    http.StatusOK,
 				"token":   token,

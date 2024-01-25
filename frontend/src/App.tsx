@@ -37,7 +37,7 @@ const App: React.FC = () => {
         const fetchUserData = async () => {
             try {
                 if(document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/)) {
-                    const response = await axios.get('http://localtest.me:8080/auth/me');
+                    const response = await axios.get(process.env.REACT_APP_BACKEND_URI + '/auth/me');
                     setUserData(response.data.data);
                     setIsAdmin(response.data.isAdmin);
                 }
@@ -113,11 +113,11 @@ const App: React.FC = () => {
 
 const LoginPage: React.FC<{ logout: boolean }> = ({ logout }) => {
     if(!logout){
-        window.location.replace('http://localtest.me:8080/login');
+        window.location.replace(process.env.REACT_APP_BACKEND_URI + '/login');
     } else {
         const logoutHandler = async () => {
             try {
-               await axios.get('http://localtest.me:8080/logout');
+               await axios.get(process.env.REACT_APP_BACKEND_URI + '/logout');
             } catch (error) {
                 console.error('Error logging out:', error);
             }
