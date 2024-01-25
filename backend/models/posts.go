@@ -5,12 +5,14 @@ type Post struct {
 	Author  string `json:"author"`
 	Thread  uint   `json:"thread"`
 	Content string `json:"content"`
+	Email   string `json:"email"`
 }
 
 type CreatePostInput struct {
-	Author  string `json:"author" binding:"required"`
+	Author  string
 	Content string `json:"content" binding:"required"`
 	Thread  uint   `json:"thread"`
+	Email   string
 }
 
 type UpdatePostInput struct {

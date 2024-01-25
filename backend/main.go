@@ -23,7 +23,7 @@ func main() {
 	models.ConnectDatabase() // new
 	authy := auth.Provider(r)
 
-	r.GET("/posts", controllers.GetPosts)
+	r.GET("/posts", authy, controllers.GetPosts)
 	r.GET("/posts/:id", controllers.FindPost)
 	r.POST("/posts", authy, controllers.CreatePost)
 	r.PATCH("/posts/:id", authy, controllers.UpdatePost)

@@ -1,10 +1,11 @@
 package auth
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
-	"github.com/markbates/goth/providers/google"
+	"github.com/markbates/goth/providers/gplus"
 	"log"
 	"net/http"
 	"net/url"
@@ -177,26 +178,27 @@ func Provider(r *gin.Engine) gin.HandlerFunc {
 	})
 
 	//does the redirect
-	googleProvider := google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_CLIENT_SECRET"), os.Getenv("GOOGLE_CALLBACK"))
+	googleProvider := gplus.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_CLIENT_SECRET"), os.Getenv("GOOGLE_CALLBACK"))
 	goth.UseProviders(googleProvider)
 
 	r.GET("/login", func(c *gin.Context) {
 		q := c.Request.URL.Query()
-		q.Add("provider", "google")
+		q.Add("provider", "gplus")
 		c.Request.URL.RawQuery = q.Encode()
 		gothic.BeginAuthHandler(c.Writer, c.Request)
 	})
 
 	r.GET("/callback", func(c *gin.Context) {
 		q := c.Request.URL.Query()
-		q.Add("provider", "google")
+		q.Add("provider", "gplus")
 		c.Request.URL.RawQuery = q.Encode()
 		user, err := gothic.CompleteUserAuth(c.Writer, c.Request)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-
+		jsonString, err := json.Marshal(user)
+		log.Println(string(jsonString))
 		var (
 			key []byte
 			t   *jwt2.Token

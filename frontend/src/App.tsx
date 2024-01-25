@@ -1,14 +1,15 @@
 // src/App.tsx
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import PostList from './components/PostList';
 import PostDetails from './components/PostDetails';
 import NewPost from './components/NewPost';
 import {AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Typography, Container, Box} from '@mui/material';
 
 const App: React.FC = () => {
-    const [auth, setAuth] = useState(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const auth = document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -16,12 +17,6 @@ const App: React.FC = () => {
 
     const handleMenuClose = () => {
         setAnchorEl(null);
-    };
-
-    const handleLogout = () => {
-        // Perform logout logic here
-        setAuth(false);
-        handleMenuClose();
     };
 
     return (
@@ -48,7 +43,7 @@ const App: React.FC = () => {
                                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                             >
-                                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                <MenuItem component={Link} to="/logout">Logout</MenuItem>
                             </Menu>
                         </div>
                     ) : (
@@ -73,7 +68,8 @@ const App: React.FC = () => {
                     <Route path="/posts" element={<PostList />} />
                     <Route path="/posts/:id" element={<PostDetails />} />
                     <Route path="/new-post" element={<NewPost />} />
-                    <Route path="/login" element={<LoginPage setAuth={setAuth} />} />
+                    <Route path="/login" element={<LoginPage logout={false} />} />
+                    <Route path="/logout" element={<LoginPage logout={true} />} />
                     <Route path="/*" element={<Navigate to="/posts" />} />
                 </Routes>
                 </Box>
@@ -82,9 +78,21 @@ const App: React.FC = () => {
     );
 };
 
-const LoginPage: React.FC<{ setAuth: React.Dispatch<React.SetStateAction<boolean>> }> = ({ setAuth }) => {
-    setAuth(true);
-    window.location.replace('http://localtest.me:8080/login')
+const LoginPage: React.FC<{ logout: boolean }> = ({ logout }) => {
+    if(!logout){
+        window.location.replace('http://localtest.me:8080/login');
+    } else {
+        const logoutHandler = async () => {
+            try {
+               await axios.get('http://localtest.me:8080/logout');
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        };
+        logoutHandler().then(_ => {
+            window.location.replace('/posts');
+        });
+    }
     return <div />;
 };
 

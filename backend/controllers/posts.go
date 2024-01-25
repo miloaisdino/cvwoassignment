@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	jwt "github.com/appleboy/gin-jwt/v2"
+	"log"
 	"net/http"
 
 	"backend/models"
@@ -11,14 +13,21 @@ import (
 // Get all posts
 func GetPosts(c *gin.Context) {
 	var posts []models.Post
+	claims := jwt.ExtractClaims(c)
 	models.DB.Find(&posts)
-
+	for k, post := range posts {
+		if claims["email"] == nil || post.Email != claims["email"].(string) {
+			post.Email = ""
+		} //redact non-self emails
+		posts[k] = post
+	}
 	c.JSON(http.StatusOK, gin.H{"data": posts})
 }
 
 // CreatePost POST /posts
 // Create new post
 func CreatePost(c *gin.Context) {
+	claims := jwt.ExtractClaims(c)
 	// Validate input
 	var input models.CreatePostInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -27,7 +36,14 @@ func CreatePost(c *gin.Context) {
 	}
 
 	// Create post
-	post := models.Post{Author: input.Author, Content: input.Content, Thread: input.Thread}
+	post := models.Post{
+		Author:  claims["name"].(string),
+		Content: input.Content,
+		//Thread:  input.Thread,
+		Thread: 0,
+		Email:  claims["email"].(string),
+	}
+	log.Println(claims)
 	models.DB.Create(&post)
 
 	c.JSON(http.StatusOK, gin.H{"data": post})

@@ -22,7 +22,8 @@ const PostList: React.FC = () => {
 
     return (
         <Grid container spacing={2}>
-            <Button component={Link} to="/new-post" variant="contained" color="primary" style={{ marginBottom: '16px' }}>
+            <Button component={Link} to="/new-post" variant="contained" color="primary"
+                    sx={{ml: 2, mb: 1, mt: 1}}>
                 New Post
             </Button>
             {posts.map((post: any) => (
@@ -35,8 +36,9 @@ const PostList: React.FC = () => {
                             <Typography variant="body2" color="textSecondary">
                                 {post.content}
                             </Typography>
-                            <Button component={Link} to={`/posts/${post.id}`} variant="contained" color="primary">
-                                View
+                            <Button disabled={ post.email === "" } style={{float: 'right'}}
+                                    component={Link} to={`/posts/${post.id}`} color="primary">
+                                Edit
                             </Button>
                         </CardContent>
                     </Card>

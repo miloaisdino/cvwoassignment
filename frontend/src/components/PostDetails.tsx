@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { apiInstance, ApiErrorAlert } from '../utils/api';
-import { Typography, Button, TextField } from '@mui/material';
+import { Typography, Button, TextField, Box } from '@mui/material';
 
 interface Post {
     id: number;
@@ -19,7 +19,7 @@ const PostDetails: React.FC = () => {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await apiInstance.get(`http://localtest.me:8080/posts/${id}`);
+                const response = await apiInstance.get(`http://localtest.me:8080/posts/${id}`); //inbuilt acl
                 setPost(response.data.data);
                 setEditedContent(response.data.data.content);
             } catch (error) {
@@ -65,7 +65,6 @@ const PostDetails: React.FC = () => {
     return (
         <div>
             <ApiErrorAlert />
-            <Typography variant="h4">Post Details</Typography>
             {post ? (
                 <div>
                     <Typography variant="h6">{post.author}</Typography>
@@ -88,9 +87,9 @@ const PostDetails: React.FC = () => {
                         </div>
                     ) : (
                         <div>
-                            <Typography variant="body1">{post.content}</Typography>
-                            <Button variant="outlined" onClick={handleEditClick}>
-                                Edit
+                            <Typography variant="body1" sx={{pb: 2, pt: 1}}>{post.content}</Typography>
+                            <Button variant="contained" onClick={handleEditClick}>
+                                Modify Content
                             </Button>
                         </div>
                     )}
@@ -98,7 +97,8 @@ const PostDetails: React.FC = () => {
             ) : (
                 <Typography variant="body1">Loading...</Typography>
             )}
-            <Button variant="contained" color="secondary" onClick={handleDelete}>
+            <Box sx={{pb: 2}}></Box>
+            <Button variant="contained" color="error" onClick={handleDelete} sx={{mr: 3}}>
                 Delete
             </Button>
             <Button component={Link} to="/posts" variant="contained" color="primary">
