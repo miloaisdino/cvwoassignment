@@ -130,8 +130,6 @@ func DeletePost(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
-
 	models.DB.Delete(&post)
-
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

@@ -35,8 +35,10 @@ const App: React.FC = () => {
         // Fetch user data from /auth/me endpoint
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('http://localtest.me:8080/auth/me');
-                setUserData(response.data.data);
+                if(document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/)) {
+                    const response = await axios.get('http://localtest.me:8080/auth/me');
+                    setUserData(response.data.data);
+                }
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
@@ -49,7 +51,11 @@ const App: React.FC = () => {
         <Router>
             <AppBar position="static">
                 <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6"
+                                component={Link}
+                                to="/"
+                                color="white"
+                                sx={{ flexGrow: 1, textDecoration: "none" }}>
                         Forum App
                     </Typography>
                     {userData ? (

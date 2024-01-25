@@ -36,6 +36,9 @@ const ApiErrorAlert = () => {
             // Handle 401 errors
             if (error.response && error.response.status === 401) {
                 showAlert('error', 'You are not logged in');
+            } else if(error.response && error.response.status === 403) {
+                showAlert('error', 'Access denied');
+                console.error('API Error:', error);
             } else {
                 // Handle other errors
                 showAlert('error', 'Validation error: You have blank inputs');

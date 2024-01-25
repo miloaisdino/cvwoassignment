@@ -45,6 +45,16 @@ func meHandler(c *gin.Context) {
 	})
 }
 
+func AdminCheck(c *gin.Context) bool {
+	var user models.User
+	claims := jwt.ExtractClaims(c)
+	if res := models.DB.Where("email = ? AND is_admin = true", claims["email"]).First(&user); res.RowsAffected > 0 {
+		return true
+	} else {
+		return false
+	}
+}
+
 type User struct {
 	Email string
 	Name  string
@@ -135,7 +145,6 @@ func Provider(r *gin.Engine) gin.HandlerFunc {
 			// Check if the user with the specified email already exists
 			err := tx.Where("email = ?", v.Email).First(&user).Error
 			if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-				// Handle the error
 				tx.Rollback()
 				return true
 			}
@@ -148,22 +157,23 @@ func Provider(r *gin.Engine) gin.HandlerFunc {
 					IsBanned: false,
 				}
 				if err := tx.Save(&user).Error; err != nil {
-					// Handle the error
 					tx.Rollback()
-					//return err
 				}
 			}
 
 			// Commit the transaction
 			if err := tx.Commit().Error; err != nil {
-				// Handle the error
 				tx.Rollback()
-				//return err
 			}
 
-			//to check dbRow for banned status
+			//to check for banned status
+			if res := models.DB.Where("email = ? AND is_banned = true", v.Email).First(&user); res.RowsAffected > 0 {
+				//c.JSON(http.StatusBadRequest, gin.H{"error": "Banned user!"})
+				c.Abort()
+				return false
+			}
 
-			return true //for now
+			return true
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{

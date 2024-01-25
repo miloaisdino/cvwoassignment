@@ -1,6 +1,6 @@
 // components/AdminPage.tsx
 import React, { useState, useEffect } from 'react';
-import { DataGrid, GridColDef, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
+import {DataGrid, GridColDef, GridRowId, GridRowModel, GridRowSelectionModel} from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import axios from 'axios';
 
@@ -33,24 +33,31 @@ const AdminPage: React.FC = () => {
 
     const handleUpdateAdminData = async () => {
         try {
-            await axios.patch('http://localhost:8080/admin/data', adminData);
+            await axios.patch('http://localtest.me:8080/admin/data', adminData);
             console.log('Admin data updated successfully');
         } catch (error) {
             console.error('Error updating admin data:', error);
         }
     };
 
+    const processRowUpdate = (newRow: GridRowModel) => {
+        const updatedRow = { ...newRow, isNew: false };
+        // @ts-ignore
+        setAdminData(adminData.map((row) => (row.id === newRow.id ? updatedRow : row)));
+        return updatedRow;
+    };
+
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID' },
         { field: 'email', headerName: 'Email', flex: 1 },
-        { field: 'banned', headerName: 'Banned', flex: 1, renderCell: (params) => (params.value ? 'Yes' : 'No') },
-        { field: 'isAdmin', headerName: 'Admin', flex: 1, renderCell: (params) => (params.value ? 'Yes' : 'No') },
+        { field: 'banned', headerName: 'Banned', flex: 1, type: "boolean", renderCell: (params) => (params.value ? 'Yes' : 'No'), editable: true},
+        { field: 'isAdmin', headerName: 'Admin', flex: 1, type: "boolean", renderCell: (params) => (params.value ? 'Yes' : 'No'), editable: true },
     ];
 
     return (
         <div>
             <h2>Admin Page</h2>
-            <div style={{ height: 400, width: '100%' }}>
+            <div style={{ height: '100%', width: '80vw' }}>
                 <DataGrid
                     rows={adminData}
                     columns={columns}
@@ -59,10 +66,11 @@ const AdminPage: React.FC = () => {
                     onRowSelectionModelChange={(newSelectionModel: React.SetStateAction<GridRowId[]>) => {
                         setSelectionModel(newSelectionModel);
                     }}
+                    processRowUpdate={processRowUpdate}
                 />
             </div>
             <Button variant="contained" color="primary" onClick={handleUpdateAdminData}>
-                Update Admin Data
+                Save
             </Button>
         </div>
     );

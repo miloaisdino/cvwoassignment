@@ -1,6 +1,7 @@
 // src/components/PostList.tsx
 import React, { useState, useEffect } from 'react';
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
+import { apiInstance, ApiErrorAlert } from '../utils/api';
 import {Link} from 'react-router-dom';
 import Tag from './Tag';
 import {Card, CardContent, Button, Typography, Grid, Box} from '@mui/material';
@@ -13,9 +14,9 @@ const PostList = ({isLogged}: { isLogged: boolean }) => {
             try {
                 let response: AxiosResponse<any, any>;
                 if(document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/)) {
-                    response = await axios.get('http://localtest.me:8080/posts');
+                    response = await apiInstance.get('http://localtest.me:8080/posts');
                 } else {
-                    response = await axios.get('http://localtest.me:8080/posts-read');
+                    response = await apiInstance.get('http://localtest.me:8080/posts-read');
                 }
                 setPosts(response.data.data);
             } catch (error) {
@@ -28,6 +29,7 @@ const PostList = ({isLogged}: { isLogged: boolean }) => {
 
     return (
         <Grid container spacing={2}>
+            <ApiErrorAlert />
             <Button disabled={!isLogged} component={Link} to="/new-post" variant="contained" color="primary"
                     sx={{ml: 2, mb: 1, mt: 1}}>
                 {isLogged ? "New Post" : "Login to Post"}
