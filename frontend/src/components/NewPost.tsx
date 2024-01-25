@@ -14,10 +14,16 @@ const NewPost: React.FC = () => {
     };
 
     const handleAddTag = () => {
+        if(tags == ''){return false;}
         // @ts-ignore
         setTagList([...tagList, tags]);
         setTags('');
     };
+
+    const handleDeleteTag = (tagToDelete: never) => {
+        setTagList((prevTags) => prevTags.filter((tag: { name: string, color: string }) => tag !== tagToDelete));
+    };
+
 
     const handleCreatePost = async () => {
         try {
@@ -71,7 +77,8 @@ const NewPost: React.FC = () => {
                         <Chip
                             key={tag}
                             label={tag}
-                            style={{ margin: '4px', padding: '4px', backgroundColor: '#3498db', color: 'white' }}
+                            onDelete={() => handleDeleteTag(tag)}
+                            style={{ margin: '4px', padding: '4px' }}
                         />
                     ))}
                 </Box>

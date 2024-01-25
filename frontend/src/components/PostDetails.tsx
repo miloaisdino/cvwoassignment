@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { apiInstance, ApiErrorAlert } from '../utils/api';
-import { Typography, Button, TextField, Box, Chip } from '@mui/material';
+import { Typography, Button, TextField, Box, Chip, Grid, Stack } from '@mui/material';
 
 interface Post {
     id: number;
@@ -38,6 +38,7 @@ const PostDetails: React.FC = () => {
     };
 
     const handleAddTag = () => {
+        if(tags == ''){ return false }
         // @ts-ignore
         setTagList([...tagList, tags]);
         setTags('');
@@ -83,13 +84,13 @@ const PostDetails: React.FC = () => {
     const tagJsx = (<>
         <Box mb={2}>
             <TextField
-                label="Tags"
+                label="New tags"
                 variant="outlined"
                 fullWidth
                 value={tags}
                 onChange={handleTagChange}
             />
-            <Button variant="contained" color="primary" onClick={handleAddTag} sx={{ marginLeft: 2 }}>
+            <Button variant="contained" color="primary" onClick={handleAddTag}>
                 Add Tag
             </Button>
         </Box>
@@ -99,7 +100,7 @@ const PostDetails: React.FC = () => {
                     key={tag}
                     label={tag}
                     onDelete={() => handleDeleteTag(tag)}
-                    style={{ margin: '4px', padding: '4px', backgroundColor: '#3498db', color: 'white' }}
+                    style={{ margin: '4px', padding: '4px' }}
                 />
             ))}
         </Box>
@@ -107,11 +108,13 @@ const PostDetails: React.FC = () => {
 
 
     return (
-        <div>
+        <Grid container spacing={1}>
+            <Grid xs={12}>
+            <Stack spacing={0}>
             <ApiErrorAlert />
+            <Typography variant="h4">Edit Post</Typography><Box sx={{pb: 1}}></Box>
             {post ? (
                 <div>
-                    <Typography variant="h6">{post.author}</Typography>
                     {editMode ? (
                         <div>
                             <TextField
@@ -123,7 +126,7 @@ const PostDetails: React.FC = () => {
                                 onChange={(e) => setEditedContent(e.target.value)}
                             />
                             {tagJsx}
-                            <Button variant="contained" color="primary" onClick={handleSaveClick}>
+                            <Button variant="contained" color="success" onClick={handleSaveClick}>
                                 Save
                             </Button>
                             <Button variant="outlined" onClick={handleCancelClick}>
@@ -133,24 +136,27 @@ const PostDetails: React.FC = () => {
 
                     ) : (
                         <div>
-                            <Typography variant="body1" sx={{pb: 2, pt: 1}}>{post.content}</Typography>
-                            <Button variant="contained" onClick={handleEditClick}>
+                            <Typography variant="body1" sx={{pb: 1, pt: 1}}>{post.content}</Typography>
+                            <Button variant="contained" onClick={handleEditClick} sx={{mr: 1}}>
                                 Modify
+                            </Button>
+                            <Button variant="contained" color="error" onClick={handleDelete} >
+                                Delete
                             </Button>
                         </div>
                     )}
                 </div>
             ) : (
-                <Typography variant="body1">Loading...</Typography>
+                <Typography variant="body1"></Typography>
             )}
-            <Box sx={{pb: 2}}></Box>
-            <Button variant="contained" color="error" onClick={handleDelete} sx={{mr: 3}}>
-                Delete
-            </Button>
-            <Button component={Link} to="/posts" variant="contained" color="primary">
+            <Box sx={{mt: 1}}>
+            <Button component={Link} to="/posts" variant="outlined" color="primary">
                 Back to Posts
             </Button>
-        </div>
+            </Box>
+            </Stack>
+            </Grid>
+        </Grid>
     );
 };
 

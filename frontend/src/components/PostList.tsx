@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Tag from './Tag';
-import { Card, CardContent, Button, Typography, Grid } from '@mui/material';
+import { Card, CardContent, Button, Typography, Grid, Box } from '@mui/material';
 
 const PostList = ({isLogged}: {isLogged: boolean}) => {
     const [posts, setPosts] = useState([]);
@@ -37,14 +37,14 @@ const PostList = ({isLogged}: {isLogged: boolean}) => {
                             <Typography variant="body2" color="textSecondary">
                                 {post.content}
                             </Typography>
-                            <div>
+                            <Box sx={{mt: 1}}>
                                 {post.tags && post.tags.map((tag: {
                                     name: string,
                                     color: string
                                 }) => (
                                     <Tag key={tag.name} name={tag.name} color={tag.color} />
                                 ))}
-                            </div>
+                            </Box>
                             <Button disabled={ post.email === "" } style={{float: 'right'}}
                                     component={Link} to={`/posts/${post.id}`} color="primary">
                                 Edit
