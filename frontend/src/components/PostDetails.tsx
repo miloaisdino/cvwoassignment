@@ -89,7 +89,7 @@ const PostDetails: React.FC = () => {
                         <div>
                             <Typography variant="body1" sx={{pb: 2, pt: 1}}>{post.content}</Typography>
                             <Button variant="contained" onClick={handleEditClick}>
-                                Modify Content
+                                Modify
                             </Button>
                         </div>
                     )}
@@ -102,7 +102,7 @@ const PostDetails: React.FC = () => {
                 Delete
             </Button>
             <Button component={Link} to="/posts" variant="contained" color="primary">
-                Back to List
+                Back to Posts
             </Button>
         </div>
     );

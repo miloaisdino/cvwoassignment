@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import Tag from './Tag';
 import { Card, CardContent, Button, Typography, Grid } from '@mui/material';
 
 const PostList = ({isLogged}: {isLogged: boolean}) => {
@@ -20,6 +21,11 @@ const PostList = ({isLogged}: {isLogged: boolean}) => {
         fetchPosts();
     }, []);
 
+    type tTag = {
+        name: string;
+        color: string;
+    };
+
     return (
         <Grid container spacing={2}>
             <Button disabled={!isLogged} component={Link} to="/new-post" variant="contained" color="primary"
@@ -36,6 +42,11 @@ const PostList = ({isLogged}: {isLogged: boolean}) => {
                             <Typography variant="body2" color="textSecondary">
                                 {post.content}
                             </Typography>
+                            <div>
+                                {post.tags && post.tags.map((tag: tTag) => (
+                                    <Tag key={tag.name} name={tag.name} color={tag.color} />
+                                ))}
+                            </div>
                             <Button disabled={ post.email === "" } style={{float: 'right'}}
                                     component={Link} to={`/posts/${post.id}`} color="primary">
                                 Edit

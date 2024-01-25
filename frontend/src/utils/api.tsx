@@ -38,7 +38,7 @@ const ApiErrorAlert = () => {
                 showAlert('error', 'You are not logged in');
             } else {
                 // Handle other errors
-                showAlert('error', 'An error occurred. Please try again later.');
+                showAlert('error', 'Validation error');
                 console.error('API Error:', error);
             }
 

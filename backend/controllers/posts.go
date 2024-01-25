@@ -3,6 +3,7 @@ package controllers
 import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"log"
+	"math/rand"
 	"net/http"
 
 	"backend/models"
@@ -14,7 +15,11 @@ import (
 func GetPosts(c *gin.Context) {
 	var posts []models.Post
 	claims := jwt.ExtractClaims(c)
-	models.DB.Find(&posts)
+	//models.DB.Find(&posts)
+	if err := models.DB.Preload("Tags").Find(&posts).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
 	for k, post := range posts {
 		if claims["email"] == nil || post.Email != claims["email"].(string) {
 			post.Email = ""
@@ -39,14 +44,28 @@ func CreatePost(c *gin.Context) {
 	post := models.Post{
 		Author:  claims["name"].(string),
 		Content: input.Content,
-		//Thread:  input.Thread,
-		Thread: 0,
-		Email:  claims["email"].(string),
+		Email:   claims["email"].(string),
 	}
-	log.Println(claims)
+	// Create or update tags
+	for _, tagStr := range input.Tags {
+		tag := models.Tag{
+			Name:  tagStr,
+			Color: getRandomColor(),
+		}
+		models.DB.FirstOrCreate(&tag, tag)
+		post.Tags = append(post.Tags, tag)
+	}
+	log.Println(post)
 	models.DB.Create(&post)
 
 	c.JSON(http.StatusOK, gin.H{"data": post})
+}
+
+func getRandomColor() string {
+	// Your implementation to generate a random color
+	// For simplicity, you can use a predefined list of colors
+	colors := []string{"#3498db", "#2ecc71", "#e74c3c", "#f39c12", "#9b59b6", "#1abc9c"}
+	return colors[rand.Intn(len(colors))]
 }
 
 // FindPost GET /posts/:id

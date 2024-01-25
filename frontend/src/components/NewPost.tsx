@@ -1,15 +1,30 @@
 // src/components/NewPost.tsx
 import React, { useState } from 'react';
 import { apiInstance, ApiErrorAlert } from '../utils/api';
-import { TextField, Button, Typography } from '@mui/material';
+import {TextField, Button, Typography, Box, Chip, Grid, Stack} from '@mui/material';
+import {Link} from "react-router-dom";
 
 const NewPost: React.FC = () => {
     const [content, setContent] = useState('');
+    const [tags, setTags] = useState('');
+    const [tagList, setTagList] = useState([]);
+
+    const handleTagChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+        setTags(event.target.value);
+    };
+
+    const handleAddTag = () => {
+        // @ts-ignore
+        setTagList([...tagList, tags]);
+        setTags('');
+    };
 
     const handleCreatePost = async () => {
         try {
+            console.log(tagList);
             await apiInstance.post('http://localtest.me:8080/posts', {
                 content,
+                tags: tagList,
             });
 
             // Redirect to the post list after creating a new post
@@ -20,22 +35,54 @@ const NewPost: React.FC = () => {
     };
 
     return (
-        <div>
-            <ApiErrorAlert />
-            <Typography variant="h4">New Post</Typography>
-            <TextField
-                label="Content"
-                multiline
-                fullWidth
-                variant="outlined"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                margin="normal"
-            />
-            <Button variant="contained" color="primary" onClick={handleCreatePost}>
-                Create Post
-            </Button>
-        </div>
+        <Grid container spacing={1}>
+            <Stack spacing={0}>
+                <Box>
+                    <ApiErrorAlert />
+                    <Typography variant="h4">New Post</Typography>
+                </Box>
+                <Box>
+                    <TextField
+                        label="Content"
+                        multiline
+                        fullWidth
+                        variant="outlined"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        margin="normal"
+                    />
+                </Box>
+                <Box>
+                    <TextField
+                        label="Tags"
+                        variant="outlined"
+                        fullWidth
+                        value={tags}
+                        onChange={handleTagChange}
+                    />
+                    <Button variant="contained" color="primary" onClick={handleAddTag} sx={{ mt: 1, mb: 1, mr: 1 }}>
+                        Add Tag
+                    </Button>
+
+                    <Button component={Link} to="/posts" variant="outlined" color="primary">
+                        Back to Posts
+                    </Button>
+
+                    {tagList.map((tag) => (
+                        <Chip
+                            key={tag}
+                            label={tag}
+                            style={{ margin: '4px', padding: '4px', backgroundColor: '#3498db', color: 'white' }}
+                        />
+                    ))}
+                </Box>
+                <Box>
+                    <Button variant="contained" color="primary" onClick={handleCreatePost}>
+                        Create Post
+                    </Button>
+                </Box>
+            </Stack>
+        </Grid>
     );
 };
 
