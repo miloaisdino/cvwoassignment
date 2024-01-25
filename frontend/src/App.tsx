@@ -1,4 +1,5 @@
 // src/App.tsx
+import './index.css'
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
@@ -6,6 +7,7 @@ import PostList from './components/PostList';
 import PostDetails from './components/PostDetails';
 import NewPost from './components/NewPost';
 import {AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Typography, Container, Box} from '@mui/material';
+import Icon from '@mui/material/Icon';
 
 interface UserData {
     dp: string;
@@ -68,7 +70,7 @@ const App: React.FC = () => {
                         </div>
                     ) : (
                         <Button color="inherit" component={Link} to="/login">
-                            Login
+                            <Icon>login</Icon>
                         </Button>
                     )}
                 </Toolbar>

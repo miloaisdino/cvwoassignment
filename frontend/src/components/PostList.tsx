@@ -1,17 +1,22 @@
 // src/components/PostList.tsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import axios, { AxiosResponse } from 'axios';
+import {Link} from 'react-router-dom';
 import Tag from './Tag';
-import { Card, CardContent, Button, Typography, Grid, Box } from '@mui/material';
+import {Card, CardContent, Button, Typography, Grid, Box} from '@mui/material';
 
-const PostList = ({isLogged}: {isLogged: boolean}) => {
+const PostList = ({isLogged}: { isLogged: boolean }) => {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('http://localtest.me:8080/posts');
+                let response: AxiosResponse<any, any>;
+                if(document.cookie.match(/^(.*;)?\s*jwt\s*=\s*[^;]+(.*)?$/)) {
+                    response = await axios.get('http://localtest.me:8080/posts');
+                } else {
+                    response = await axios.get('http://localtest.me:8080/posts-read');
+                }
                 setPosts(response.data.data);
             } catch (error) {
                 console.error('Error fetching posts:', error);

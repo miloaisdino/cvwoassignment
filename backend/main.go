@@ -24,6 +24,7 @@ func main() {
 	authy := auth.Provider(r)
 
 	r.GET("/posts", authy, controllers.GetPosts)
+	r.GET("/posts-read", controllers.GetPosts)
 	r.GET("/posts/:id", controllers.FindPost)
 	r.POST("/posts", authy, controllers.CreatePost)
 	r.PATCH("/posts/:id", authy, controllers.UpdatePost)
