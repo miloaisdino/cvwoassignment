@@ -1,8 +1,8 @@
 package models
 
 type User struct {
-	Name      string
-	Email     string
-	UserID    string
-	AvatarURL string
+	ID       uint   `json:"id" gorm:"primary_key"`
+	Email    string `json:"email" gorm:"unique"`
+	IsAdmin  bool
+	IsBanned bool
 }

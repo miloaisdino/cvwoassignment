@@ -1,11 +1,14 @@
 package auth
 
 import (
+	"backend/models"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/gplus"
+	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"net/url"
@@ -119,9 +122,46 @@ func Provider(r *gin.Engine) gin.HandlerFunc {
 			return nil, jwt.ErrFailedAuthentication
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			if v, ok := data.(*User); ok && v.Email == "admin" {
+			//check for admin and banned status here
+			/*if v, ok := data.(*User); ok && v.Email == "admin" {
+				return true
+			}*/
+			v, _ := data.(*User)
+			var user models.User
+
+			// Start a database transaction
+			tx := models.DB.Begin()
+
+			// Check if the user with the specified email already exists
+			err := tx.Where("email = ?", v.Email).First(&user).Error
+			if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+				// Handle the error
+				tx.Rollback()
 				return true
 			}
+
+			// If the user does not exist, create a new user
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				user = models.User{
+					Email:    v.Email,
+					IsAdmin:  false,
+					IsBanned: false,
+				}
+				if err := tx.Save(&user).Error; err != nil {
+					// Handle the error
+					tx.Rollback()
+					//return err
+				}
+			}
+
+			// Commit the transaction
+			if err := tx.Commit().Error; err != nil {
+				// Handle the error
+				tx.Rollback()
+				//return err
+			}
+
+			//to check dbRow for banned status
 
 			return true //for now
 		},

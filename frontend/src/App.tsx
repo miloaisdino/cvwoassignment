@@ -8,6 +8,7 @@ import PostDetails from './components/PostDetails';
 import NewPost from './components/NewPost';
 import {AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Typography, Container, Box} from '@mui/material';
 import Icon from '@mui/material/Icon';
+import AdminPage from "./components/AdminPage";
 
 interface UserData {
     dp: string;
@@ -92,6 +93,7 @@ const App: React.FC = () => {
                     <Route path="/new-post" element={<NewPost />} />
                     <Route path="/login" element={<LoginPage logout={false} />} />
                     <Route path="/logout" element={<LoginPage logout={true} />} />
+                    <Route path="/admin" element={<AdminPage />} />
                     <Route path="/*" element={<Navigate to="/posts" />} />
                 </Routes>
                 </Box>

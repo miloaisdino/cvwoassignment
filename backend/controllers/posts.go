@@ -2,7 +2,6 @@ package controllers
 
 import (
 	jwt "github.com/appleboy/gin-jwt/v2"
-	"log"
 	"math/rand"
 	"net/http"
 
@@ -55,7 +54,6 @@ func CreatePost(c *gin.Context) {
 		models.DB.FirstOrCreate(&tag, tag)
 		post.Tags = append(post.Tags, tag)
 	}
-	log.Println(post)
 	models.DB.Create(&post)
 
 	c.JSON(http.StatusOK, gin.H{"data": post})

@@ -38,7 +38,7 @@ const ApiErrorAlert = () => {
                 showAlert('error', 'You are not logged in');
             } else {
                 // Handle other errors
-                showAlert('error', 'Validation error');
+                showAlert('error', 'Validation error: You have blank inputs');
                 console.error('API Error:', error);
             }
 
