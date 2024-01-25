@@ -1,6 +1,6 @@
 // src/App.tsx
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import PostList from './components/PostList';
 import PostDetails from './components/PostDetails';
