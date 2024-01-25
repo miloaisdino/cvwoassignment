@@ -21,7 +21,6 @@ const NewPost: React.FC = () => {
 
     const handleCreatePost = async () => {
         try {
-            console.log(tagList);
             await apiInstance.post('http://localtest.me:8080/posts', {
                 content,
                 tags: tagList,

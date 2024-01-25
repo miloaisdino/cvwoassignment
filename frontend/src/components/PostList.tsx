@@ -21,11 +21,6 @@ const PostList = ({isLogged}: {isLogged: boolean}) => {
         fetchPosts();
     }, []);
 
-    type tTag = {
-        name: string;
-        color: string;
-    };
-
     return (
         <Grid container spacing={2}>
             <Button disabled={!isLogged} component={Link} to="/new-post" variant="contained" color="primary"
@@ -43,7 +38,10 @@ const PostList = ({isLogged}: {isLogged: boolean}) => {
                                 {post.content}
                             </Typography>
                             <div>
-                                {post.tags && post.tags.map((tag: tTag) => (
+                                {post.tags && post.tags.map((tag: {
+                                    name: string,
+                                    color: string
+                                }) => (
                                     <Tag key={tag.name} name={tag.name} color={tag.color} />
                                 ))}
                             </div>

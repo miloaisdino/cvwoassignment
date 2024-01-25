@@ -25,5 +25,6 @@ type CreatePostInput struct {
 }
 
 type UpdatePostInput struct {
-	Content string `json:"content"`
+	Content string   `json:"content"`
+	Tags    []string `json:"tags"`
 }

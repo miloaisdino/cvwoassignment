@@ -73,7 +73,7 @@ func getRandomColor() string {
 func FindPost(c *gin.Context) {
 	var post models.Post
 
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&post).Error; err != nil {
+	if err := models.DB.Preload("Tags").Where("id = ?", c.Param("id")).First(&post).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
@@ -98,7 +98,28 @@ func UpdatePost(c *gin.Context) {
 		return
 	}
 
-	models.DB.Model(&post).Updates(input)
+	//Update content
+	//models.DB.Model(&post).Updates(input)
+	models.DB.Model(&post).Updates(models.Post{
+		Content: input.Content,
+	})
+
+	// Update tags
+	var updatedTags []models.Tag
+	for _, tagName := range input.Tags {
+		tag := models.Tag{
+			Name:  tagName,
+			Color: getRandomColor(),
+		}
+		models.DB.FirstOrCreate(&tag, tag)
+		updatedTags = append(updatedTags, tag)
+	}
+
+	// Update the post's tags
+	err := models.DB.Model(&post).Association("Tags").Replace(updatedTags)
+	if err != nil {
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": post})
 }
